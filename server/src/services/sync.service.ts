@@ -580,13 +580,13 @@ export class SyncService extends BaseService {
     const deleteType = SyncEntityType.SharedSpaceDeleteV1;
     const deletes = this.syncRepository.sharedSpace.getDeletes({ ...options, ack: checkpointMap[deleteType] });
     for await (const { id, ...data } of deletes) {
-      send(response, { type: deleteType, ids: [id], data });
+      await send(response, { type: deleteType, ids: [id], data });
     }
 
     const upsertType = SyncEntityType.SharedSpaceV1;
     const upserts = this.syncRepository.sharedSpace.getUpserts({ ...options, ack: checkpointMap[upsertType] });
     for await (const { updateId, ...data } of upserts) {
-      send(response, { type: upsertType, ids: [updateId], data });
+      await send(response, { type: upsertType, ids: [updateId], data });
     }
   }
 
@@ -599,7 +599,7 @@ export class SyncService extends BaseService {
     const deleteType = SyncEntityType.SharedSpaceMemberDeleteV1;
     const deletes = this.syncRepository.sharedSpaceMember.getDeletes({ ...options, ack: checkpointMap[deleteType] });
     for await (const { id, ...data } of deletes) {
-      send(response, { type: deleteType, ids: [id], data });
+      await send(response, { type: deleteType, ids: [id], data });
     }
 
     const backfillType = SyncEntityType.SharedSpaceMemberBackfillV1;
@@ -626,10 +626,10 @@ export class SyncService extends BaseService {
         );
 
         for await (const { updateId, ...data } of backfill) {
-          send(response, { type: backfillType, ids: [createId, updateId], data });
+          await send(response, { type: backfillType, ids: [createId, updateId], data });
         }
 
-        sendEntityBackfillCompleteAck(response, backfillType, createId);
+        await sendEntityBackfillCompleteAck(response, backfillType, createId);
       }
     } else if (spaces.length > 0) {
       await this.upsertBackfillCheckpoint({
@@ -641,7 +641,7 @@ export class SyncService extends BaseService {
 
     const upserts = this.syncRepository.sharedSpaceMember.getUpserts({ ...options, ack: checkpointMap[upsertType] });
     for await (const { updateId, ...data } of upserts) {
-      send(response, { type: upsertType, ids: [updateId], data });
+      await send(response, { type: upsertType, ids: [updateId], data });
     }
   }
 
@@ -678,10 +678,10 @@ export class SyncService extends BaseService {
         );
 
         for await (const { updateId, ...data } of backfill) {
-          send(response, { type: backfillType, ids: [createId, updateId], data: mapSyncAssetV1(data) });
+          await send(response, { type: backfillType, ids: [createId, updateId], data: mapSyncAssetV1(data) });
         }
 
-        sendEntityBackfillCompleteAck(response, backfillType, createId);
+        await sendEntityBackfillCompleteAck(response, backfillType, createId);
       }
     } else if (spaces.length > 0) {
       await this.upsertBackfillCheckpoint({
@@ -697,7 +697,7 @@ export class SyncService extends BaseService {
         createCheckpoint,
       );
       for await (const { updateId, ...data } of updates) {
-        send(response, { type: updateType, ids: [updateId], data: mapSyncAssetV1(data) });
+        await send(response, { type: updateType, ids: [updateId], data: mapSyncAssetV1(data) });
       }
     }
 
@@ -705,7 +705,7 @@ export class SyncService extends BaseService {
     let first = true;
     for await (const { updateId, ...data } of creates) {
       if (first) {
-        send(response, {
+        await send(response, {
           type: SyncEntityType.SyncAckV1,
           data: {},
           ackType: SyncEntityType.SharedSpaceAssetUpdateV1,
@@ -713,7 +713,7 @@ export class SyncService extends BaseService {
         });
         first = false;
       }
-      send(response, { type: createType, ids: [updateId], data: mapSyncAssetV1(data) });
+      await send(response, { type: createType, ids: [updateId], data: mapSyncAssetV1(data) });
     }
   }
 
@@ -749,10 +749,10 @@ export class SyncService extends BaseService {
         );
 
         for await (const { updateId, ...data } of backfill) {
-          send(response, { type: backfillType, ids: [createId, updateId], data });
+          await send(response, { type: backfillType, ids: [createId, updateId], data });
         }
 
-        sendEntityBackfillCompleteAck(response, backfillType, createId);
+        await sendEntityBackfillCompleteAck(response, backfillType, createId);
       }
     } else if (spaces.length > 0) {
       await this.upsertBackfillCheckpoint({
@@ -768,7 +768,7 @@ export class SyncService extends BaseService {
         createCheckpoint,
       );
       for await (const { updateId, ...data } of updates) {
-        send(response, { type: updateType, ids: [updateId], data });
+        await send(response, { type: updateType, ids: [updateId], data });
       }
     }
 
@@ -776,7 +776,7 @@ export class SyncService extends BaseService {
     let first = true;
     for await (const { updateId, ...data } of creates) {
       if (first) {
-        send(response, {
+        await send(response, {
           type: SyncEntityType.SyncAckV1,
           data: {},
           ackType: SyncEntityType.SharedSpaceAssetExifUpdateV1,
@@ -784,7 +784,7 @@ export class SyncService extends BaseService {
         });
         first = false;
       }
-      send(response, { type: createType, ids: [updateId], data });
+      await send(response, { type: createType, ids: [updateId], data });
     }
   }
 
@@ -797,7 +797,7 @@ export class SyncService extends BaseService {
     const deleteType = SyncEntityType.SharedSpaceToAssetDeleteV1;
     const deletes = this.syncRepository.sharedSpaceToAsset.getDeletes({ ...options, ack: checkpointMap[deleteType] });
     for await (const { id, ...data } of deletes) {
-      send(response, { type: deleteType, ids: [id], data });
+      await send(response, { type: deleteType, ids: [id], data });
     }
 
     const backfillType = SyncEntityType.SharedSpaceToAssetBackfillV1;
@@ -824,10 +824,10 @@ export class SyncService extends BaseService {
         );
 
         for await (const { updateId, ...data } of backfill) {
-          send(response, { type: backfillType, ids: [createId, updateId], data });
+          await send(response, { type: backfillType, ids: [createId, updateId], data });
         }
 
-        sendEntityBackfillCompleteAck(response, backfillType, createId);
+        await sendEntityBackfillCompleteAck(response, backfillType, createId);
       }
     } else if (spaces.length > 0) {
       await this.upsertBackfillCheckpoint({
@@ -839,7 +839,7 @@ export class SyncService extends BaseService {
 
     const upserts = this.syncRepository.sharedSpaceToAsset.getUpserts({ ...options, ack: checkpointMap[upsertType] });
     for await (const { updateId, ...data } of upserts) {
-      send(response, { type: upsertType, ids: [updateId], data });
+      await send(response, { type: upsertType, ids: [updateId], data });
     }
   }
 
@@ -850,13 +850,13 @@ export class SyncService extends BaseService {
     const deleteType = SyncEntityType.LibraryDeleteV1;
     const deletes = this.syncRepository.library.getDeletes({ ...options, ack: checkpointMap[deleteType] });
     for await (const { id, libraryId } of deletes) {
-      send(response, { type: deleteType, ids: [id], data: { libraryId } });
+      await send(response, { type: deleteType, ids: [id], data: { libraryId } });
     }
 
     const upsertType = SyncEntityType.LibraryV1;
     const upserts = this.syncRepository.library.getUpserts({ ...options, ack: checkpointMap[upsertType] });
     for await (const { updateId, ...data } of upserts) {
-      send(response, { type: upsertType, ids: [updateId], data });
+      await send(response, { type: upsertType, ids: [updateId], data });
     }
   }
 
@@ -877,7 +877,7 @@ export class SyncService extends BaseService {
     const deleteType = SyncEntityType.LibraryAssetDeleteV1;
     const deletes = this.syncRepository.libraryAsset.getDeletes({ ...options, ack: checkpointMap[deleteType] });
     for await (const { id, assetId } of deletes) {
-      send(response, { type: deleteType, ids: [id], data: { assetId } });
+      await send(response, { type: deleteType, ids: [id], data: { assetId } });
     }
 
     const backfillType = SyncEntityType.LibraryAssetBackfillV1;
@@ -905,10 +905,10 @@ export class SyncService extends BaseService {
         );
 
         for await (const { updateId, ...data } of backfill) {
-          send(response, { type: backfillType, ids: [createId, updateId], data: mapSyncAssetV1(data) });
+          await send(response, { type: backfillType, ids: [createId, updateId], data: mapSyncAssetV1(data) });
         }
 
-        sendEntityBackfillCompleteAck(response, backfillType, createId);
+        await sendEntityBackfillCompleteAck(response, backfillType, createId);
       }
     } else if (libraries.length > 0) {
       await this.upsertBackfillCheckpoint({
@@ -920,7 +920,7 @@ export class SyncService extends BaseService {
 
     const upserts = this.syncRepository.libraryAsset.getUpserts({ ...options, ack: upsertCheckpoint });
     for await (const { updateId, ...data } of upserts) {
-      send(response, { type: upsertType, ids: [updateId], data: mapSyncAssetV1(data) });
+      await send(response, { type: upsertType, ids: [updateId], data: mapSyncAssetV1(data) });
     }
   }
 
@@ -957,10 +957,10 @@ export class SyncService extends BaseService {
         );
 
         for await (const { updateId, ...data } of backfill) {
-          send(response, { type: backfillType, ids: [createId, updateId], data });
+          await send(response, { type: backfillType, ids: [createId, updateId], data });
         }
 
-        sendEntityBackfillCompleteAck(response, backfillType, createId);
+        await sendEntityBackfillCompleteAck(response, backfillType, createId);
       }
     } else if (libraries.length > 0) {
       await this.upsertBackfillCheckpoint({
@@ -972,7 +972,7 @@ export class SyncService extends BaseService {
 
     const upserts = this.syncRepository.libraryAssetExif.getUpserts({ ...options, ack: upsertCheckpoint });
     for await (const { updateId, ...data } of upserts) {
-      send(response, { type: upsertType, ids: [updateId], data });
+      await send(response, { type: upsertType, ids: [updateId], data });
     }
   }
 
@@ -991,7 +991,7 @@ export class SyncService extends BaseService {
       ack: checkpointMap[deleteType],
     });
     for await (const { id, ...data } of deletes) {
-      send(response, { type: deleteType, ids: [id], data });
+      await send(response, { type: deleteType, ids: [id], data });
     }
 
     const backfillType = SyncEntityType.SharedSpaceLibraryBackfillV1;
@@ -1018,10 +1018,10 @@ export class SyncService extends BaseService {
         );
 
         for await (const { updateId, ...data } of backfill) {
-          send(response, { type: backfillType, ids: [createId, updateId], data });
+          await send(response, { type: backfillType, ids: [createId, updateId], data });
         }
 
-        sendEntityBackfillCompleteAck(response, backfillType, createId);
+        await sendEntityBackfillCompleteAck(response, backfillType, createId);
       }
     } else if (spaces.length > 0) {
       await this.upsertBackfillCheckpoint({
@@ -1036,7 +1036,7 @@ export class SyncService extends BaseService {
       ack: checkpointMap[upsertType],
     });
     for await (const { updateId, ...data } of upserts) {
-      send(response, { type: upsertType, ids: [updateId], data });
+      await send(response, { type: upsertType, ids: [updateId], data });
     }
   }
 
@@ -1070,7 +1070,7 @@ export class SyncService extends BaseService {
     const deleteType = SyncEntityType.SharedSpaceAlbumDeleteV1;
     const deletes = this.syncRepository.sharedSpaceAlbum.getDeletes({ ...options, ack: checkpointMap[deleteType] });
     for await (const { id, ...data } of deletes) {
-      send(response, { type: deleteType, ids: [id], data });
+      await send(response, { type: deleteType, ids: [id], data });
     }
 
     const upsertType = SyncEntityType.SharedSpaceAlbumV1;
@@ -1080,7 +1080,7 @@ export class SyncService extends BaseService {
       // is nullable in the database now, but the sync wire contract is still non-nullable and
       // mobile decodes it as such, so a null would break the client.
       // TODO: return null instead of '' in v4
-      send(response, { type: upsertType, ids: [updateId], data: { ...data, description: data.description ?? '' } });
+      await send(response, { type: upsertType, ids: [updateId], data: { ...data, description: data.description ?? '' } });
     }
   }
 
@@ -1099,7 +1099,7 @@ export class SyncService extends BaseService {
       ack: checkpointMap[deleteType],
     });
     for await (const { id, ...data } of deletes) {
-      send(response, { type: deleteType, ids: [id], data });
+      await send(response, { type: deleteType, ids: [id], data });
     }
 
     const backfillType = SyncEntityType.SharedSpaceAlbumLinkBackfillV1;
@@ -1126,10 +1126,10 @@ export class SyncService extends BaseService {
         );
 
         for await (const { updateId, ...data } of backfill) {
-          send(response, { type: backfillType, ids: [createId, updateId], data });
+          await send(response, { type: backfillType, ids: [createId, updateId], data });
         }
 
-        sendEntityBackfillCompleteAck(response, backfillType, createId);
+        await sendEntityBackfillCompleteAck(response, backfillType, createId);
       }
     } else if (spaces.length > 0) {
       await this.upsertBackfillCheckpoint({
@@ -1144,7 +1144,7 @@ export class SyncService extends BaseService {
       ack: checkpointMap[upsertType],
     });
     for await (const { updateId, ...data } of upserts) {
-      send(response, { type: upsertType, ids: [updateId], data });
+      await send(response, { type: upsertType, ids: [updateId], data });
     }
   }
 
@@ -1162,7 +1162,7 @@ export class SyncService extends BaseService {
       ack: checkpointMap[deleteType],
     });
     for await (const { id, ...data } of deletes) {
-      send(response, { type: deleteType, ids: [id], data });
+      await send(response, { type: deleteType, ids: [id], data });
     }
 
     const backfillType = SyncEntityType.SharedSpaceAlbumToAssetBackfillV1;
@@ -1190,10 +1190,10 @@ export class SyncService extends BaseService {
         );
 
         for await (const { updateId, ...data } of backfill) {
-          send(response, { type: backfillType, ids: [createId, updateId], data });
+          await send(response, { type: backfillType, ids: [createId, updateId], data });
         }
 
-        sendEntityBackfillCompleteAck(response, backfillType, createId);
+        await sendEntityBackfillCompleteAck(response, backfillType, createId);
       }
     } else if (albums.length > 0) {
       await this.upsertBackfillCheckpoint({
@@ -1208,7 +1208,7 @@ export class SyncService extends BaseService {
       ack: checkpointMap[upsertType],
     });
     for await (const { updateId, ...data } of upserts) {
-      send(response, { type: upsertType, ids: [updateId], data });
+      await send(response, { type: upsertType, ids: [updateId], data });
     }
   }
 
@@ -1248,10 +1248,10 @@ export class SyncService extends BaseService {
         );
 
         for await (const { updateId, ...data } of backfill) {
-          send(response, { type: backfillType, ids: [createId, updateId], data: mapSyncAssetV2(data) });
+          await send(response, { type: backfillType, ids: [createId, updateId], data: mapSyncAssetV2(data) });
         }
 
-        sendEntityBackfillCompleteAck(response, backfillType, createId);
+        await sendEntityBackfillCompleteAck(response, backfillType, createId);
       }
     } else if (albums.length > 0) {
       await this.upsertBackfillCheckpoint({
@@ -1268,7 +1268,7 @@ export class SyncService extends BaseService {
         albumToAssetAck,
       );
       for await (const { updateId, ...data } of updates) {
-        send(response, { type: updateType, ids: [updateId], data: mapSyncAssetV2(data) });
+        await send(response, { type: updateType, ids: [updateId], data: mapSyncAssetV2(data) });
       }
     }
 
@@ -1276,7 +1276,7 @@ export class SyncService extends BaseService {
     let first = true;
     for await (const { updateId, ...data } of creates) {
       if (first) {
-        send(response, {
+        await send(response, {
           type: SyncEntityType.SyncAckV1,
           data: {},
           ackType: SyncEntityType.SharedSpaceAlbumAssetUpdateV1,
@@ -1284,7 +1284,7 @@ export class SyncService extends BaseService {
         });
         first = false;
       }
-      send(response, { type: createType, ids: [updateId], data: mapSyncAssetV2(data) });
+      await send(response, { type: createType, ids: [updateId], data: mapSyncAssetV2(data) });
     }
   }
 
@@ -1324,10 +1324,10 @@ export class SyncService extends BaseService {
         );
 
         for await (const { updateId, ...data } of backfill) {
-          send(response, { type: backfillType, ids: [createId, updateId], data });
+          await send(response, { type: backfillType, ids: [createId, updateId], data });
         }
 
-        sendEntityBackfillCompleteAck(response, backfillType, createId);
+        await sendEntityBackfillCompleteAck(response, backfillType, createId);
       }
     } else if (albums.length > 0) {
       await this.upsertBackfillCheckpoint({
@@ -1344,7 +1344,7 @@ export class SyncService extends BaseService {
         albumToAssetAck,
       );
       for await (const { updateId, ...data } of updates) {
-        send(response, { type: updateType, ids: [updateId], data });
+        await send(response, { type: updateType, ids: [updateId], data });
       }
     }
 
@@ -1352,7 +1352,7 @@ export class SyncService extends BaseService {
     let first = true;
     for await (const { updateId, ...data } of creates) {
       if (first) {
-        send(response, {
+        await send(response, {
           type: SyncEntityType.SyncAckV1,
           data: {},
           ackType: SyncEntityType.SharedSpaceAlbumAssetExifUpdateV1,
@@ -1360,7 +1360,7 @@ export class SyncService extends BaseService {
         });
         first = false;
       }
-      send(response, { type: createType, ids: [updateId], data });
+      await send(response, { type: createType, ids: [updateId], data });
     }
   }
 
