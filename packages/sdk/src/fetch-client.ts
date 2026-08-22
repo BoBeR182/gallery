@@ -809,6 +809,8 @@ export type UserLicense = {
 };
 export type UserAdminResponseDto = {
     avatarColor: UserAvatarColor;
+    /** Cluster group the user is a member of */
+    clusterGroupId: string;
     /** Creation date */
     createdAt: string;
     /** Deletion date */
@@ -10581,6 +10583,7 @@ export enum NotificationType {
     SystemMessage = "SystemMessage",
     AlbumInvite = "AlbumInvite",
     AlbumUpdate = "AlbumUpdate",
+    ClusterGroupRequest = "ClusterGroupRequest",
     Custom = "Custom"
 }
 export enum UserStatus {
@@ -10671,6 +10674,11 @@ export enum Permission {
     BackupDownload = "backup.download",
     BackupUpload = "backup.upload",
     BackupDelete = "backup.delete",
+    ClusterGroupRead = "clusterGroup.read",
+    ClusterGroupLeave = "clusterGroup.leave",
+    ClusterGroupRequestCreate = "clusterGroupRequest.create",
+    ClusterGroupRequestRead = "clusterGroupRequest.read",
+    ClusterGroupRequestDelete = "clusterGroupRequest.delete",
     AdminConfigRead = "adminConfig.read",
     AdminConfigUpdate = "adminConfig.update",
     UserConfigRead = "userConfig.read",
