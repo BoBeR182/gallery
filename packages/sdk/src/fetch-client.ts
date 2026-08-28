@@ -2960,8 +2960,8 @@ export type SearchAssetResponseDto = {
     count: number;
     facets: SearchFacetResponseDto[];
     items: AssetResponseDto[];
-    /** Cursor for the next page of results */
-    nextCursor: string | null;
+    /** Opaque cursor for the next page */
+    nextCursor?: string | null;
     /** Next page token */
     nextPage: string | null;
     /** Total number of matching assets */
@@ -11127,11 +11127,6 @@ export enum JobName {
     AssetClassifyQueueAll = "AssetClassifyQueueAll",
     AssetClassify = "AssetClassify"
 }
-export enum SearchOrderField {
-    FileCreatedAt = "fileCreatedAt",
-    LocalDateTime = "localDateTime",
-    FileSizeInBytes = "fileSizeInBytes",
-    Rating = "rating"
 export enum QueueJobStatus {
     Active = "active",
     Failed = "failed",
@@ -11139,6 +11134,12 @@ export enum QueueJobStatus {
     Delayed = "delayed",
     Waiting = "waiting",
     Paused = "paused"
+}
+export enum SearchOrderField {
+    FileCreatedAt = "fileCreatedAt",
+    LocalDateTime = "localDateTime",
+    FileSizeInBytes = "fileSizeInBytes",
+    Rating = "rating"
 }
 export enum SearchSuggestionType {
     Country = "country",
